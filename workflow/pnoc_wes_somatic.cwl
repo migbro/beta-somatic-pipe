@@ -1,19 +1,16 @@
 class: Workflow
 cwlVersion: v1.0
-id: pnoc-wes-somatic-workflow
+id: kfdrc-pnoc-wes-somatic-workflow
 requirements:
   - class: MultipleInputFeatureRequirement
   - class: SubworkflowFeatureRequirement
 inputs:
   output_basename: string
   reference: { type: File, secondaryFiles: [.fai, ^.dict] }
-  threads: int
   tumor_cram: { type: File, secondaryFiles: [.crai] }
   normal_cram: { type: File, secondaryFiles: [.crai] }
   normal_id: string
   tumor_id: string
-  chr_len: File
-  ref_chrs: File
   ref_tar_gz: { type: File, label: tar gzipped snpEff reference }
   exome_target_bed: { type: File, secondaryFiles: [.tbi], label: bed file of exome target regions }
   vep_cache: { type: File, label: tar gzipped cache from ensembl/local converted cache }
@@ -24,31 +21,17 @@ outputs:
   vep_annotated_maf: { type: File, outputSource: vep_maf_annotate/output_maf }
   vep_warnings: { type: ["null", File] , outputSource: vep_maf_annotate/warn_txt }
 steps:
-  samtools_tumor_cram2bam:
-    in:
-      reference: reference
-      threads: threads
-      input_reads: tumor_cram
-    out: [output]
-    run: ../tools/samtools_cram2bam.cwl
-  samtools_normal_cram2bam:
-    in:
-      reference: reference
-      threads: threads
-      input_reads: normal_cram
-    out: [output]
-    run: ../tools/samtools_cram2bam.cwl
-  strelka2:
+  strelka2-wes:
     in:
       input_tumor_cram: tumor_cram
       input_normal_cram: normal_cram
       reference: reference
-      hg38_strelka_bed: hg38_strelka_bed
+      exome_target_bed: exome_target_bed
     out: [output]
-    run: ../tools/strelka2.cwl
+    run: ../tools/strelka2_wes.cwl
   merge_vcf:
     in:
-      input_vcf: [ strelka2/output_snv, strelka2/output_indel ]
+      input_vcf: [ strelka2-wes/output_snv, strelka2-wes/output_indel ]
       output_vcf_basename: output_basename
       normal_id: normal_id
       tumor_id: tumor_id
