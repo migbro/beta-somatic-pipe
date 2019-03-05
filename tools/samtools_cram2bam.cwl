@@ -4,9 +4,10 @@ id: samtools_cram2bam
 requirements:
   - class: ShellCommandRequirement
   - class: DockerRequirement
-    dockerPull: 'migbro/samtools:1.8'
+    dockerPull: 'kfdrc/samtools:1.9'
   - class: ResourceRequirement
     ramMin: 10000
+    cpuMin: 36
   - class: InlineJavascriptRequirement
 baseCommand: [samtools, view]
 arguments:
@@ -15,6 +16,7 @@ arguments:
     valueFrom: >-
       -@ $(inputs.threads)
       -bh $(inputs.input_reads.path)
+      -m 1G
       -T $(inputs.reference.path)
       > $(inputs.input_reads.nameroot).bam
       && samtools index $(inputs.input_reads.nameroot).bam
