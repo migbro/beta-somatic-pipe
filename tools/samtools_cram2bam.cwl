@@ -7,7 +7,7 @@ requirements:
     dockerPull: 'kfdrc/samtools:1.9'
   - class: ResourceRequirement
     ramMin: 10000
-    cpuMin: 36
+    coresMin: 36
   - class: InlineJavascriptRequirement
 baseCommand: [samtools, view]
 arguments:

@@ -32,19 +32,19 @@ outputs:
   cnv_png: { type: File, outputSource: control_free_c_viz/output_png }
 
 steps:
-  samtools_tumor_cram2bam:
-    in:
-      reference: reference
-      threads: threads
-      input_reads: tumor_cram
-    out: [output]
-    run: ../tools/samtools_cram2bam.cwl
-
   samtools_normal_cram2bam:
     in:
       reference: reference
       threads: threads
       input_reads: normal_cram
+    out: [output]
+    run: ../tools/samtools_cram2bam.cwl
+
+  samtools_tumor_cram2bam:
+    in:
+      reference: reference
+      threads: threads
+      input_reads: tumor_cram
     out: [output]
     run: ../tools/samtools_cram2bam.cwl
 
